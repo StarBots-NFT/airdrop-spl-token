@@ -44,7 +44,7 @@ yarn
 
 ### Step 2:
 
-- Get list of nft wallet owned (will automatically fill in the nft-bot file in default)
+- Get list of BOT-collection nft wallet owned (will automatically fill in the nft-bot file in default)
     - e: Env to run command: devnet, mainnet-beta, test-net
     - c: Select collection
       - (9rspksNC5fYijBJUdCkpx7AGc9cuMz5vFXze2NKwwLFj)- SOL-collection
@@ -56,7 +56,7 @@ DEBUG=airdrop-token-solana-tool:* yarn get_list_nft_minted_by_bot -e mainnet-bet
 
 ### Step 3:
 
-- Get list of nft wallet owned (will automatically fill in the nft-sol file in default)
+- Get list of SOL-collection nft wallet owned (will automatically fill in the nft-sol file in default)
   - e: Env to run command: devnet, mainnet-beta, test-net
   - c: Select collection
     - (9rspksNC5fYijBJUdCkpx7AGc9cuMz5vFXze2NKwwLFj)- SOL-collection
