@@ -23,9 +23,6 @@ yarn
 
 ### Step 1:
 
-- if you already have list nft wallet owned (which in SOL-collection and BOT-collection)
-please update file: nft-bot and nft-sol. then you can ignore this step
-
 - Get list of nft wallet owned (will automatically fill in the nft-bot, nft-sol file in default, so if you want to change the wallet, clear the data in the nft-bot, nft-sol file)
   - e: Devnet or mainnet environment
   - c: Select collection
