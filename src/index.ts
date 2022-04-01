@@ -42,16 +42,15 @@ program.version('0.0.1');
 program
     .command('get_list_nft_minted_by_bot')
     .option('-e, --env <string>', 'Solana cluster env name. One of: mainnet-beta, testnet, devnet', 'devnet')
-    .requiredOption('-w --wallet <string>', 'wallet address to get list')
     .option('-c, --creator <string>', 'creator of nft collection. One of: "GU3J48xaDcRgsCVayhtKMPeDAbfcabqsouv8uM2h4JYz" - BOT-collection,' +
-        ' "9rspksNC5fYijBJUdCkpx7AGc9cuMz5vFXze2NKwwLFj" - SOL collection', "9rspksNC5fYijBJUdCkpx7AGc9cuMz5vFXze2NKwwLFj")
-    // .option('-k, --keypair <path>', 'Solana wallet location', '--keypair not provided')
+        ' "9rspksNC5fYijBJUdCkpx7AGc9cuMz5vFXze2NKwwLFj" - SOL collection', "GU3J48xaDcRgsCVayhtKMPeDAbfcabqsouv8uM2h4JYz")
+    .option('-k, --keypair <path>', 'Solana wallet location', '--keypair not provided')
     .action(async (_directory, cmd) => {
         try {
-            const {env, wallet, creator} = cmd.opts();
+            const {env, keypair, creator} = cmd.opts();
             console.log(
-                'wallet: ',
-                wallet,
+                'keypair: ',
+                keypair,
                 'env: ',
                 env,
                 'creator: ',
@@ -60,6 +59,9 @@ program
 
             // get connection
             const connection = getConnection(env);
+            const decoded = bs58.decode(readPrivateKeyFromKeyPair(keypair));
+            const walletKeyPair = Keypair.fromSecretKey(decoded);
+            const wallet = walletKeyPair.publicKey.toBase58();
 
             const listToken = await connection.getParsedTokenAccountsByOwner(new PublicKey(wallet), {
                 programId: new PublicKey('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA'),
@@ -76,8 +78,8 @@ program
                     const index = nftMetaData.data.data.name.split('#')[1];
                     const tokenCreator = nftMetaData.data.data.creators[0].address
                     if (tokenCreator == creator) {
-                        const value = `{"address":${nftAddress},"id":${index.toString()}}\n`
-                        fs.appendFile('src/bash1/nft-bot', value, ()=> {})
+                        const value = `{"address":"${nftAddress}","id":"${index.toString()}"}\n`
+                        fs.appendFile('src/default/nft-bot', value, ()=> {})
                     }
                     console.log('index: ', index)
                 }
@@ -90,16 +92,15 @@ program
 program
     .command('get_list_nft_minted_by_sol')
     .option('-e, --env <string>', 'Solana cluster env name. One of: mainnet-beta, testnet, devnet', 'devnet')
-    .requiredOption('-w --wallet <string>', 'wallet address to get list')
     .option('-c, --creator <string>', 'creator of nft collection. One of: "GU3J48xaDcRgsCVayhtKMPeDAbfcabqsouv8uM2h4JYz" - BOT-collection,' +
-        ' "9rspksNC5fYijBJUdCkpx7AGc9cuMz5vFXze2NKwwLFj" - SOL collection', "GU3J48xaDcRgsCVayhtKMPeDAbfcabqsouv8uM2h4JYz")
-    // .option('-k, --keypair <path>', 'Solana wallet location', '--keypair not provided')
-    .action(async (_directory, cmd) => {
+        ' "9rspksNC5fYijBJUdCkpx7AGc9cuMz5vFXze2NKwwLFj" - SOL collection', "9rspksNC5fYijBJUdCkpx7AGc9cuMz5vFXze2NKwwLFj")
+    .requiredOption('-k, --keypair <path>', 'Solana wallet location', '--keypair not provided')
+    .action(async (_directory, cmd, keypair) => {
         try {
-            const {env, wallet, creator} = cmd.opts();
+            const {env, creator} = cmd.opts();
             console.log(
-                'wallet: ',
-                wallet,
+                'keypair: ',
+                keypair,
                 'env: ',
                 env,
                 'creator: ',
@@ -108,7 +109,9 @@ program
 
             // get connection
             const connection = getConnection(env);
-
+            const decoded = bs58.decode(readPrivateKeyFromKeyPair(keypair));
+            const walletKeyPair = Keypair.fromSecretKey(decoded);
+            const wallet = walletKeyPair.publicKey.toBase58();
             const listToken = await connection.getParsedTokenAccountsByOwner(new PublicKey(wallet), {
                 programId: new PublicKey('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA'),
             })
@@ -124,10 +127,10 @@ program
                     const index = nftMetaData.data.data.name.split('#')[1];
                     const tokenCreator = nftMetaData.data.data.creators[0].address
                     if (tokenCreator == creator) {
-                        const value = `{"address":${nftAddress},"id":${index.toString()}}\n`
-                        fs.appendFile('src/bash1/nft-sol', value, ()=> {})
+                        console.log('index: ', index)
+                        const value = `{"address":"${nftAddress}","id":"${index.toString()}"}\n`
+                        fs.appendFile('src/default/nft-sol', value, ()=> {})
                     }
-                    console.log('index: ', index)
                 }
             }
         } catch (error) {
@@ -138,7 +141,7 @@ program
 program
     .command('send_nft')
     .option('-e, --env <string>', 'Solana cluster env name. One of: mainnet-beta, testnet, devnet', 'devnet')
-    .requiredOption('-p, --path-name <string>', 'path chua data', 'data')
+    .requiredOption('-p, --path-name <string>', 'path contain data', 'default')
     .requiredOption('-k, --keypair <string>', 'Solana wallet location', '--keypair not provided')
     .requiredOption('-sf --sol-file-name <string>', 'path of list nft in Sol collection')
     .requiredOption('-bf --bot-file-name <string>', 'path of list nft in Bot collection')
@@ -185,7 +188,6 @@ program
             const connection = getConnection(env);
             const decoded = bs58.decode(readPrivateKeyFromKeyPair(keypair));
             const walletKeyPair = Keypair.fromSecretKey(decoded);
-            console.log('wallet: ', walletKeyPair.publicKey.toBase58());
 
             const botFile = path.resolve(__dirname, pathName, botFileName);
             const solFile = path.resolve(__dirname, pathName, solFileName);
