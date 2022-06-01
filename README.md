@@ -19,7 +19,7 @@ This tool can send multi robots to multi users in condition you have to note cle
 yarn
 ```
 
-## How to run:
+## How to run send_nft:
 
 ### Step 1:
 
@@ -77,4 +77,47 @@ Send nft to your expected person based on the file you made in step 3
 
 ```sh
 DEBUG=airdrop-token-solana-tool:* yarn send_nft --keypair ./src/data/private-key -e mainnet-beta -sf nft-sol -bf nft-bot -lw nft-send-data.json
+```
+
+
+## How to run burn_nft:
+
+### command burn 1 nft:
+```bash
+DEBUG=burn-nft-solana-tool:* ts-node src/burn-nft/index.ts burn_nft -e <env> -k <path_of_key_pair> -n <nft_address>
+```
+
+```javascript
+.command('burn_nft')
+    .requiredOption('-e, --env <string>', 'Solana cluster env name. One of: mainnet-beta, testnet, devnet', 'devnet')
+    .requiredOption('-k, --keypair <path>', 'Solana wallet location', '--keypair not provided')
+    .requiredOption('-n, --nft-address <string>', 'nft address', '--nft-address not provided')
+```
+
+
+### command get all nft by collection:
+
+```bash
+DEBUG=burn-nft-solana-tool:* ts-node src/burn-nft/index.ts get_all_nft_by_collection -e <env> -k <path_of_keypair> -c <collection_address>
+```
+
+```javascript
+.command('get_all_nft_by_collection')
+    .requiredOption('-e, --env <string>', 'Solana cluster env name. One of: mainnet-beta, testnet, devnet', 'devnet')
+    .requiredOption('-k, --keypair <path>', 'Solana wallet location', '--keypair not provided')
+    .requiredOption('-c, --collection <string>', 'collection is verified address', '--collection not provided')
+```
+
+### command burn_nft_by_collection:
+
+```bash
+DEBUG=burn-nft-solana-tool:* ts-node src/burn-nft/index.ts burn_nft_by_collection -e <env> -k <keypair_path> -c <collection_address> -cache <cache_file_name>
+```
+
+```javascript
+.command('burn_nft_by_collection')
+    .requiredOption('-e, --env <string>', 'Solana cluster env name. One of: mainnet-beta, testnet, devnet', 'devnet')
+    .requiredOption('-k, --keypair <path>', 'Solana wallet location', '--keypair not provided')
+    .requiredOption('-c, --collection <string>', 'collection address', '--collection not provided')
+    .requiredOption('-ca, --cache <string>', 'name of cache file', 'cache file')
 ```

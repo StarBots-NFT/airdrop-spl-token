@@ -30,7 +30,7 @@ program
     .command('burn_nft')
     .requiredOption('-e, --env <string>', 'Solana cluster env name. One of: mainnet-beta, testnet, devnet', 'devnet')
     .requiredOption('-k, --keypair <path>', 'Solana wallet location', '--keypair not provided')
-    .requiredOption('-n, --nft-address <string>', 'Solana wallet location', '--keypair not provided')
+    .requiredOption('-n, --nft-address <string>', 'nft address', '--nft-address not provided')
     .action(async (_directory, cmd) => {
         try {
             const {env, keypair, creator, nftAddress} = cmd.opts();
@@ -72,7 +72,7 @@ program
     .command('get_all_nft_by_collection')
     .requiredOption('-e, --env <string>', 'Solana cluster env name. One of: mainnet-beta, testnet, devnet', 'devnet')
     .requiredOption('-k, --keypair <path>', 'Solana wallet location', '--keypair not provided')
-    .requiredOption('-c, --collection <string>', 'Solana wallet location', '--keypair not provided')
+    .requiredOption('-c, --collection <string>', 'collection is verified address', '--collection not provided')
     .action(async (_directory, cmd) => {
         try {
             const {env, keypair, collection} = cmd.opts();
