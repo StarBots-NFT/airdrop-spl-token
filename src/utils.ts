@@ -59,9 +59,9 @@ type MapingAddress = {
     amount: number;
 };
 
-export function readData(file?: string): Promise<MapingAddress[]> {
+export function readData(file?: any): Promise<MapingAddress[]> {
     return new Promise((resolve, reject) => {
-        const infoAccount = [];
+        const infoAccount: any[] = [];
         fs.createReadStream(file)
             .pipe(csv())
             .on('data', (row) => {
@@ -76,14 +76,14 @@ export function readData(file?: string): Promise<MapingAddress[]> {
     });
 }
 
-export function readListNftData(file?: string) {
+export function readListNftData(file?: any) {
     const infoNFT = fs.readFileSync(file, 'utf8');
     return infoNFT;
 }
 
-export function readCache(cacheFile?: string): Promise<MapingAddress[]> {
+export function readCache(cacheFile?: any): Promise<MapingAddress[]> {
     return new Promise((resolve) => {
-        let cache = [];
+        let cache: any[] = [];
         if (fs.existsSync(cacheFile)) {
             fs.readFile(cacheFile, 'utf8', (err: any, data: string) => {
                 if (err) {

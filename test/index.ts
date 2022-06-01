@@ -2,12 +2,11 @@
 import path from 'path';
 import { equal } from 'assert';
 import { test } from 'tap';
-import { Keypair, PublicKey } from '@solana/web3.js';
+import { PublicKey } from '@solana/web3.js';
 import {
     findAssociatedTokenAddress,
     readCache,
     readData,
-    readPrivateKeyFromKeyPair,
     getMetadataPublicKey,
 } from '../src/utils';
 
@@ -54,18 +53,12 @@ test('findAssociatedTokenAddress should be correct', async () => {
     equal(ata, '7bUFzo55TKST9sF2PvMU5kNh4Beqqf8eBA9KQkGpLH2F', 'find ata should be true');
 });
 
-test('readPrivateKeyFromKeyPair should be correct', async () => {
-    const decoded = readPrivateKeyFromKeyPair(path.resolve(__dirname, '..', 'src', 'data', 'private-key-test'));
-    const walletKeyPair = Keypair.fromSecretKey(decoded);
-    equal(walletKeyPair.publicKey, 'J2SDVLXSs8VTD46HsvphoJL3zF7HKU4KkjWMXUMDehix', 'publickey should be true');
-});
-
 test('readCacheDataTest should be correct', async () => {
     const cache = await readCache('cache-data-test.csv');
     const cacheLength = cache.length;
     const firstAddress = cache[0];
     console.log(firstAddress);
-    equal(cacheLength, 4, 'cachTest length should be 4');
+    equal(cacheLength, 3, 'cachTest length should be 3');
     equal(
         firstAddress,
         JSON.stringify({ address: 'HWF6wWvChWW3z57pgn59hoPuTgQXVBazAys12Cj8Gied', amount: '2' }),
