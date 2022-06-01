@@ -34,12 +34,10 @@ program
     .action(async (_directory, cmd) => {
         try {
             const {env, keypair, creator, nftAddress} = cmd.opts();
-            console.log(
-                'keypair: ',
-                keypair,
+            debug('keypair: ', 
+                keypair, 
                 'env: ',
-                env,
-                'creator: ',
+                env, 'creator: ',
                 creator,
                 'nft-address: ',
                 nftAddress
@@ -47,7 +45,7 @@ program
 
             // get connection
             const connection = getConnection(env);
-            console.log('env: ', env);
+            debug('env: ', env);
             let decodedKey;
             try {
                 decodedKey = new Uint8Array(
@@ -58,13 +56,13 @@ program
             } catch (e) {
                 decodedKey = bs58.decode(readPrivateKeyFromKeyPair(keypair).trim());
             }
-            console.log('decoded: ', decodedKey);
+            debug('decoded: ', decodedKey);
             const walletKeyPair = Keypair.fromSecretKey(decodedKey);
             const wallet = walletKeyPair.publicKey;
 
 
             const tx = await burnTokenAndCloseAccount(nftAddress, wallet, walletKeyPair, connection, 1);
-            console.log('tx: ', tx)
+            debug('tx: ', tx)
         } catch (error) {
             console.warn(`🚫 failed to transfer with error:`, error);
         }
@@ -78,7 +76,7 @@ program
     .action(async (_directory, cmd) => {
         try {
             const {env, keypair, collection} = cmd.opts();
-            console.log(
+            debug(
                 'keypair: ',
                 keypair,
                 'env: ',
@@ -89,7 +87,7 @@ program
 
             // get connection
             const connection = getConnection(env);
-            console.log('env: ', env);
+            debug('env: ', env);
             let decodedKey;
             try {
                 decodedKey = new Uint8Array(
@@ -101,10 +99,10 @@ program
                 decodedKey = bs58.decode(readPrivateKeyFromKeyPair(keypair).trim());
             }
 
-            console.log('decoded: ', decodedKey);
+            debug('decoded: ', decodedKey);
             const walletKeyPair = Keypair.fromSecretKey(decodedKey);
             const tx = await getAllNftByCollection(connection, walletKeyPair, collection);
-            console.log('tx: ', tx)
+            debug('tx: ', tx)
         } catch (error) {
             console.warn(`🚫 failed to transfer with error:`, error);
         }
@@ -119,7 +117,7 @@ program
     .action(async (_directory, cmd) => {
         try {
             const {env, keypair, collection, cache} = cmd.opts();
-            console.log(
+            debug(
                 'keypair: ',
                 keypair,
                 'env: ',
@@ -132,7 +130,7 @@ program
 
             // get connection
             const connection = getConnection(env);
-            console.log('env: ', env);
+            debug('env: ', env);
             let decodedKey;
             try {
                 decodedKey = new Uint8Array(
@@ -144,12 +142,12 @@ program
                 decodedKey = bs58.decode(readPrivateKeyFromKeyPair(keypair).trim());
             }
 
-            console.log('decoded: ', decodedKey);
+            debug('decoded: ', decodedKey);
             const walletKeyPair = Keypair.fromSecretKey(decodedKey);
             const listNft = await getAllNftByCollection(connection, walletKeyPair, collection);
             for (let i = 0; i < listNft.length; i++) {
                 const tx = await burnTokenAndCloseAccount(listNft[i], walletKeyPair.publicKey, walletKeyPair, connection, 1);
-                console.log('tx: ', tx)
+                debug('tx: ', tx)
                 fs.appendFileSync(cache, tx as string + "\n" )
             }
         } catch (error) {
