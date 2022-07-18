@@ -6,6 +6,10 @@ import {DEFAULT_RETRY_TIME} from "../constants";
 import {decodeIndex, decodeItem, getTotal, Item} from "./schema";
 
 export async function burnTokenAndCloseAccount(tokenMintAddress: string, owner: PublicKey, walletKeyPair: Keypair, connection: Connection, amount: number) {
+    console.log('tokenMintAddress: ', tokenMintAddress)
+    console.log('owner: ', owner.toString())
+    console.log('connection: ', connection)
+    console.log('amount: ', amount)
     try {
         const mintPublickey = new PublicKey(tokenMintAddress);
 

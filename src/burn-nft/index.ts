@@ -191,6 +191,7 @@ program
                 const tx = await burnTokenAndCloseAccount(listNft[i], walletKeyPair.publicKey, walletKeyPair, connection, 1);
                 debug('tx: ', tx)
                 fs.appendFileSync(cache, tx as string + "\n" )
+                console.log(listNft[i])
             }
         } catch (error) {
             console.warn(`🚫 failed to transfer with error:`, error);
