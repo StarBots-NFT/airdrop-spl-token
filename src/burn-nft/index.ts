@@ -34,8 +34,8 @@ program
     .action(async (_directory, cmd) => {
         try {
             const {env, keypair, creator, nftAddress} = cmd.opts();
-            debug('keypair: ', 
-                keypair, 
+            debug('keypair: ',
+                keypair,
                 'env: ',
                 env, 'creator: ',
                 creator,
@@ -152,9 +152,10 @@ program
     .requiredOption('-k, --keypair <path>', 'Solana wallet location', '--keypair not provided')
     .requiredOption('-c, --collection <string>', 'collection address', '--collection not provided')
     .requiredOption('-ca, --cache <string>', 'name of cache file', 'cache file')
+    .requiredOption('-f, --file <path>', 'name of list nfts file', 'nft-address file')
     .action(async (_directory, cmd) => {
         try {
-            const {env, keypair, collection, cache} = cmd.opts();
+            const {env, keypair, collection, cache, file} = cmd.opts();
             debug(
                 'keypair: ',
                 keypair,
@@ -163,7 +164,9 @@ program
                 'nft-address: ',
                 collection,
                 'cache: ',
-                cache
+                cache,
+                'file: ',
+                file
             );
 
             // get connection
@@ -178,46 +181,17 @@ program
                 );
             } catch (e) {
                 decodedKey = bs58.decode(readPrivateKeyFromKeyPair(keypair).trim());
+                decodedKey = bs58.decode(readPrivateKeyFromKeyPair(keypair).trim());
             }
 
             debug('decoded: ', decodedKey);
             const walletKeyPair = Keypair.fromSecretKey(decodedKey);
-            const {listNft, nftIndex} = await getAllNftByCollection(connection, walletKeyPair.publicKey, collection);
-            const pageIndex = new PublicKey('7fE2DivksgE4jmA7hJ7hn9GYnXcsXV1sbcUEiEcUC8KC')
-            const listItem = await logAllItemsInPage(pageIndex, connection, 10000);
-            let indexitemsMinted = []
-            let indexItems = []
-            let indexItemsNotCompelete = []
+            const listNft = fs.readFileSync(file, 'utf-8').split('\n');
             for (let i = 0; i < listNft.length; i++) {
-                debug('i: ', i)
-                debug('nftindex: ', nftIndex[i])
-                if (listItem[nftIndex[i]]?.owner != '11111111111111111111111111111111') indexItems.push(i);
-                if (
-                    listItem[nftIndex[i]]?.opened_body as unknown as number == 1 &&
-                    listItem[nftIndex[i]]?.opened_gadget as unknown as number == 1 &&
-                    listItem[nftIndex[i]]?.opened_wheel1 as unknown as number == 1 &&
-                    listItem[nftIndex[i]]?.opened_wheel2 as unknown as number == 1 &&
-                    listItem[nftIndex[i]]?.opened_weapon as unknown as number == 1
-                ) {
-                    const tx = await burnTokenAndCloseAccount(listNft[i], walletKeyPair.publicKey, walletKeyPair, connection, 1);
-                    debug('tx: ', tx)
-                    fs.appendFileSync(cache, tx as string + "\n" )
-                    indexitemsMinted.push(nftIndex[i]);
-                }
-                if (listItem[nftIndex[i]].owner != '11111111111111111111111111111111' &&
-                    (
-                        listItem[nftIndex[i]]?.opened_body as unknown as number != 1 ||
-                    listItem[nftIndex[i]]?.opened_gadget as unknown as number != 1 ||
-                    listItem[nftIndex[i]]?.opened_wheel1 as unknown as number != 1 ||
-                    listItem[nftIndex[i]]?.opened_wheel2 as unknown as number != 1 ||
-                    listItem[nftIndex[i]]?.opened_weapon as unknown as number != 1
-                    )
-                ) indexItemsNotCompelete.push(nftIndex[i])
+                const tx = await burnTokenAndCloseAccount(listNft[i], walletKeyPair.publicKey, walletKeyPair, connection, 1);
+                debug('tx: ', tx)
+                fs.appendFileSync(cache, tx as string + "\n" )
             }
-            debug('item minted: ', indexitemsMinted.length)
-            debug('item: ', indexItems.length)
-            debug('indexItemsNotCompelete: ', indexItemsNotCompelete)
-            debug('indexItemsNotCompelete: ', indexItemsNotCompelete.length)
         } catch (error) {
             console.warn(`🚫 failed to transfer with error:`, error);
         }
