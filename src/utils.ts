@@ -18,7 +18,7 @@ import csv from 'csv-parser';
 import { TOKEN_METADATA_PROGRAM_ID } from './constants';
 import saveCache from "./saveCache";
 
-const RPC_CLUSTER_SERUM = 'https://solana-api.projectserum.com';
+const RPC_CLUSTER_SERUM = 'https://small-silent-moon.solana-mainnet.quiknode.pro/2769beb915e8fbb93b2b21b7f643d7f177d61beb/';
 // const RPC_CLUSTER_DEV = 'https://api.devnet.solana.com';
 // const RPC_CLUSTER = RPC_CLUSTER_DEV;
 const RPC_CLUSTER = RPC_CLUSTER_SERUM;
