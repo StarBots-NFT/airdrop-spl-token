@@ -4,21 +4,17 @@ import {Collection, Metadata} from "@metaplex-foundation/mpl-token-metadata";
 import {getMetadataPublicKey} from "../utils";
 import {DEFAULT_RETRY_TIME} from "../constants";
 import {decodeIndex, decodeItem, getTotal, Item} from "./schema";
+import {at} from "lodash";
 
 export async function burnTokenAndCloseAccount(tokenMintAddress: string, owner: PublicKey, walletKeyPair: Keypair, connection: Connection, amount: number) {
     console.log('tokenMintAddress: ', tokenMintAddress)
     console.log('owner: ', owner.toString())
-    console.log('connection: ', connection)
     console.log('amount: ', amount)
     try {
         const mintPublickey = new PublicKey(tokenMintAddress);
 
-        const associatedAddress = await Token.getAssociatedTokenAddress(
-            ASSOCIATED_TOKEN_PROGRAM_ID,
-            TOKEN_PROGRAM_ID,
-            mintPublickey,
-            owner,
-        );
+        console.log('mint: ', mintPublickey.toString())
+        const associatedAddress = await getAtaOfTrash(connection, mintPublickey);
 
         const burnInstruction = await Token.createBurnInstruction(
             TOKEN_PROGRAM_ID,
@@ -37,7 +33,15 @@ export async function burnTokenAndCloseAccount(tokenMintAddress: string, owner: 
             []
         );
 
-        const BurnandCloseTransaction = new Transaction().add(burnInstruction, closeInstruction);
+        const closeNFTInstruction = await Token.createCloseAccountInstruction(
+            TOKEN_PROGRAM_ID,
+            new PublicKey(tokenMintAddress),
+            owner,
+            owner,
+            []
+        );
+
+        const BurnandCloseTransaction = new Transaction().add(burnInstruction, closeInstruction, closeNFTInstruction);
 
         const signature = await sendAndConfirmTransaction(connection, BurnandCloseTransaction, [walletKeyPair], {
             commitment: 'processed',
@@ -55,7 +59,7 @@ export async function getAllNftByCollection(connection: Connection, walletPubkey
     });
     const nfts: any[] = [];
     const nftIndex = [];
-    let sum =0
+    let sum = 0
     for (let i = 0; i < allTokens.value.length; i++) {
         const info = allTokens.value[i].account.data.parsed.info;
         const tokenAmount = info.tokenAmount;
@@ -107,6 +111,13 @@ export async function logAllItemsInPage(
     return listItem;
 }
 
+export async function getAtaOfTrash(connection: Connection, mint: PublicKey) {
+    const ata = await connection.getTokenLargestAccounts(mint)
+    console.log('atas: ', ata.value)
+    console.log('ata: ', ata.value[0].address.toString())
+    return ata.value[0].address
+}
+
 export type RetryFunctionParams = {
     func: any,
     retryTime?: number,
@@ -128,7 +139,7 @@ export async function retryFunction(
         return await func(...params)
     } catch (e: any) {
         if (retryIndex < retryTime) {
-            const rs = await retryFunction({ func, retryTime: retryTime, retryIndex: retryIndex + 1 }, ...params)
+            const rs = await retryFunction({func, retryTime: retryTime, retryIndex: retryIndex + 1}, ...params)
             return rs
         } else throw new Error(e.message)
     }

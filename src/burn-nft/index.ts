@@ -60,7 +60,6 @@ program
             const walletKeyPair = Keypair.fromSecretKey(decodedKey);
             const wallet = walletKeyPair.publicKey;
 
-
             const tx = await burnTokenAndCloseAccount(nftAddress, wallet, walletKeyPair, connection, 1);
             debug('tx: ', tx)
         } catch (error) {
